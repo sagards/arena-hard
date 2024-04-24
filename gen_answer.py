@@ -24,6 +24,8 @@ from utils import (
     chat_completion_mistral,
     chat_completion_gemini,
     chat_completion_cohere,
+    chat_completion_now_vllm,
+    now_tgi,
     reorg_answer_file,
     OPENAI_MODEL_LIST,
     temperature_config,
@@ -77,6 +79,19 @@ def get_answer(
                                                 messages=conv,
                                                 temperature=temperature,
                                                 max_tokens=max_tokens)
+            # if api_type contains "now_"
+            elif "toolkit_vllm" in api_type:
+                output = chat_completion_now_vllm(model=endpoint_info["model_name"], 
+                                                messages=conv, 
+                                                temperature=temperature, 
+                                                max_tokens=max_tokens, 
+                                                api_dict=api_dict)
+            elif "toolkit_tgi" in api_type:
+                output = now_tgi(model=endpoint_info["model_name"], 
+                                                messages=conv, 
+                                                temperature=temperature, 
+                                                max_tokens=max_tokens, 
+                                                api_dict=api_dict)
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
                                                 messages=conv, 

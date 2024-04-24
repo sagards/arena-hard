@@ -8,4 +8,8 @@ num_choices: 1
 
 # a list of model to generate answers
 model_list:
-  - gpt-3.5-turbo-0125
+  # - gpt-3.5-turbo-0125
+  # - plato_7b_kto_all_37k_iter1_epoch2_2
+  # - plato_7b_kto_all_37k_iter1_epoch2_1
+  - plato_7b_ktomix50k
+  # - mixtral_instruct_8x22b

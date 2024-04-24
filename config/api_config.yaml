@@ -25,3 +25,47 @@ gpt-4-1106-preview:
     endpoints: null
     api_type: openai
     parallel: 8
+
+gpt-4-32k:
+    model_name: gpt-4-32k
+    endpoints:
+        #- api_base: https://atg-canada-east.openai.azure.com/
+        #  api_key: 899ed382e11e44fab9e8fc13310075f9
+        #  api_version: 2023-07-01-preview
+        - api_base: https://test-atg-openai.openai.azure.com/
+          api_key: bcea2612fb0e40c88c3c06289b2c7d70
+          api_version: 2024-02-15-preview
+    api_type: azure
+    parallel: 8
+
+mixtral_instruct_8x22b:
+    model_name: mixtral_instruct_8x22b
+    endpoints:
+        - api_base: https://38758ec0-a501-4f4a-a250-bd7b1fca024c-8000.job.console.elementai.com/v1
+          api_key: 8o30OElfDYV_D6YbbznT0A:GDC2BsXIfSdfjv9iWka3V4MkazpvHfe0cCwXohzbP0Q
+    api_type: toolkit_vllm
+    parallel: 8
+
+plato_7b_kto_all_37k_iter1_epoch2_2:
+    model_name: plato_7b_kto_all_37k_iter1_epoch2_2
+    endpoints:
+        - api_base: https://d7e57911-c892-4265-b516-78e38dd54029.job.console.elementai.com/generate
+          api_key: 8o30OElfDYV_D6YbbznT0A:GDC2BsXIfSdfjv9iWka3V4MkazpvHfe0cCwXohzbP0Q
+    api_type: toolkit_tgi
+    parallel: 8
+
+plato_7b_kto_all_37k_iter1_epoch2_1:
+    model_name: plato_7b_kto_all_37k_iter1_epoch2_1
+    endpoints:
+        - api_base: https://5af11fe6-b322-4f39-9dd5-b4e0a29e3eb3.job.console.elementai.com/generate
+          api_key: 8o30OElfDYV_D6YbbznT0A:GDC2BsXIfSdfjv9iWka3V4MkazpvHfe0cCwXohzbP0Q
+    api_type: toolkit_tgi
+    parallel: 8
+
+plato_7b_ktomix50k:
+    model_name: plato_7b_ktomix50k
+    endpoints:
+        - api_base: https://0a02efe9-3f6e-4471-a7ca-9530c90e420d.job.console.elementai.com/generate
+          api_key: 8o30OElfDYV_D6YbbznT0A:GDC2BsXIfSdfjv9iWka3V4MkazpvHfe0cCwXohzbP0Q
+    api_type: toolkit_tgi
+    parallel: 8

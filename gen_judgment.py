@@ -162,7 +162,7 @@ if __name__ == "__main__":
     for model in models:
         output_files[model] = os.path.join(
             output_dir,
-            f"{model}.jsonl",
+            f"baseline_{configs["baseline_model"]}_vs_{model}.jsonl",
         )
 
     for output_file in output_files.values():
