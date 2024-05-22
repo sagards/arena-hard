@@ -12,6 +12,7 @@ import concurrent.futures
 import tiktoken
 import shortuuid
 import tqdm
+from transformers import AutoTokenizer
 
 from utils import (
     load_questions,
@@ -48,11 +49,13 @@ def get_answer(
         conv.append({"role": "system", "content": "You are a helpful assistant."})
 
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    tokenizer = AutoTokenizer.from_pretrained(endpoint_info.get("tokenizer", "mistralai/Mistral-7B-Instruct-v0.1"))
     choices = []
     for i in range(num_choices):
         turns = []
         for j in range(len(question["turns"])):
             conv.append({"role": "user", "content": question["turns"][j]["content"]})
+            token_len = -1
             if api_type == "anthropic":
                 output = chat_completion_anthropic(model=endpoint_info["model_name"],
                                                    messages=conv,
@@ -74,6 +77,7 @@ def get_answer(
                                                       temperature=temperature,
                                                       max_tokens=max_tokens,
                                                       api_dict=api_dict)
+                token_len = len(encoding.encode(output))
             elif api_type == "cohere":
                 output = chat_completion_cohere(model=endpoint_info["model_name"],
                                                 messages=conv,
@@ -86,21 +90,24 @@ def get_answer(
                                                 temperature=temperature, 
                                                 max_tokens=max_tokens, 
                                                 api_dict=api_dict)
+                token_len = len(tokenizer.encode(output))
             elif "toolkit_tgi" in api_type:
                 output = now_tgi(model=endpoint_info["model_name"], 
                                                 messages=conv, 
                                                 temperature=temperature, 
                                                 max_tokens=max_tokens, 
                                                 api_dict=api_dict)
+                token_len = len(tokenizer.encode(output))
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
                                                 messages=conv, 
                                                 temperature=temperature, 
                                                 max_tokens=max_tokens, 
                                                 api_dict=api_dict)
+                token_len = len(encoding.encode(output))
             conv.append({"role": "assistant", "content": output})
 
-            turns.append({"content": output, "token_len": len(encoding.encode(output))})
+            turns.append({"content": output, "token_len": token_len})
         choices.append({"index": i, "turns": turns})
 
     # Dump answers

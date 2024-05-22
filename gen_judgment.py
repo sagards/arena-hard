@@ -92,6 +92,7 @@ def judgment(**args):
                         prompt_args[f"ref_answer_{i+j+1}"] = turn["content"]
             
             user_prompt = template.format(**prompt_args)
+            user_prompt = user_prompt.replace("<|end|>", "")
             conv.append({"role": "user", "content": user_prompt})
 
         judgment = ""
@@ -114,7 +115,8 @@ def judgment(**args):
                 break
 
             conv.append({"role": "user", "content": "continue your judgment and finish by outputting a final verdict label"})
-
+        #print("print conv for game: " + str(game))
+        #print(conv)
         result = {
             "user_prompt": conv[1]["content"],
             "judgment": judgment,
@@ -162,7 +164,7 @@ if __name__ == "__main__":
     for model in models:
         output_files[model] = os.path.join(
             output_dir,
-            f"baseline_{configs["baseline_model"]}_vs_{model}.jsonl",
+            f"{model}.jsonl",
         )
 
     for output_file in output_files.values():
@@ -171,8 +173,10 @@ if __name__ == "__main__":
     existing_judgments = load_model_answers(output_dir)
 
     endpoint_info = endpoint_list[configs["judge_model"]]
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=endpoint_info["parallel"]) as executor:
+    max_workers = endpoint_info["parallel"]
+    print(f"Max workers: {max_workers}")
+    # max_workers = 1
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = []
         for model in models:
             count = 0

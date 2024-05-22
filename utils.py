@@ -384,6 +384,8 @@ def now_tgi(model, messages, temperature, max_tokens, api_dict=None):
         "Content-Type": "application/json"
     }
     prompt = apply_chat_template(messages)
+    # prompt = get_prompt_json_array(messages)
+    # print(prompt)
     output = API_ERROR_OUTPUT
     try:
         payload = json.dumps({
@@ -401,16 +403,29 @@ def now_tgi(model, messages, temperature, max_tokens, api_dict=None):
         print(type(e), e)
         output = API_ERROR_OUTPUT
     return output
-    
 
 def apply_chat_template(messages, template: str = "mistralai/Mistral-7B-Instruct-v0.1"):
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(template)
-        tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    except Exception as e:
-        print(type(e), e)
-        tokenized_chat = messages
+    # try:
+    #     tokenizer = AutoTokenizer.from_pretrained(template)
+    #     tokenizer.chat_template = """{% if (messages[0]['role'] == 'system') %}{% set user_idx = 1 %}{% else %}{% set user_idx = 0 %}{% endif %}{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == user_idx) %}{{ raise_exception('Conversation roles must alternate (system/)user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '<|user|>\\n' + message['content'] + '\\n<|end|>\\n' }}{% elif message['role'] == 'assistant' %}{{ '<|assistant|>\\n' + message['content'] + '\\n<|end|>\\n' }}{% elif message['role'] == 'system' %}{{ '<|system|>\\n' + message['content'] + '\\n<|end|>\\n' }}{% endif %}{% endfor %}{{ eos_token }}{{'\\n<|assistant|>'}}"""
+    #     tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    # except Exception as e:
+    #     print(type(e), e)
+    #     tokenized_chat = messages
+    # convert messages to chat template - <|user|>\nUSER_TURN\n<|end|>\n<|assistant|>
+    tokenized_chat = "<s><|user|>\n" + messages[0]["content"] + "\n<|end|>\n<|assistant|>\n"
     return tokenized_chat
+
+def get_prompt_json_array(messages):
+    prompt = []
+    content = ""
+    for message in messages:
+        content += message["content"] + "\n"
+    prompt = [{
+        "role": "user",
+        "content": content
+    }]
+    return prompt
 
 def reorg_answer_file(answer_file):
     """Sort by question id and de-duplication"""
